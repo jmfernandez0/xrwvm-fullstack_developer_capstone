@@ -62,7 +62,14 @@ def get_cars(request):
         initiate()
 
     car_models = CarModel.objects.select_related("car_make")
-    cars = [{"CarModel": cm.name, "CarMake": cm.car_make.name} for cm in car_models]
+    cars = []
+    for cm in car_models:
+        cars.append(
+            {
+                "CarModel": cm.name,
+                "CarMake": cm.car_make.name,
+            }
+        )
     return JsonResponse({"CarModels": cars})
 
 
@@ -81,7 +88,10 @@ def get_dealer_reviews(request, dealer_id):
 
     for review_detail in reviews:
         response = analyze_review_sentiments(review_detail.get("review", ""))
-        review_detail["sentiment"] = response.get("sentiment", "neutral")
+        review_detail["sentiment"] = response.get(
+            "sentiment",
+            "neutral",
+        )
 
     return JsonResponse({"status": 200, "reviews": reviews})
 
