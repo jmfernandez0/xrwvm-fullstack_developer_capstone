@@ -15,11 +15,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
-    "jmfernandez0-8000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai",
+    (
+        "jmfernandez0-8000.theiadockernext-0-labs-prod-theiak8s-4-tor01."
+        "proxy.cognitiveclass.ai"
+    ),
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://jmfernandez0-8000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai",
+    (
+        "https://jmfernandez0-8000.theiadockernext-0-labs-prod-theiak8s-4-tor01."
+        "proxy.cognitiveclass.ai"
+    ),
 ]
 
 REST_FRAMEWORK = {
