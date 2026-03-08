@@ -1,23 +1,16 @@
 # Uncomment the required imports before adding the code
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth import logout
-from django.contrib import messages
-from datetime import datetime
-
-from django.http import JsonResponse
-from django.contrib.auth import login, authenticate
-import logging
 import json
+import logging
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .populate import initiate
+
 from .models import CarMake, CarModel
-from .restapis import get_request, analyze_review_sentiments, post_review
-
-
+from .populate import initiate
+from .restapis import analyze_review_sentiments, get_request, post_review
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -42,9 +35,8 @@ def login_user(request):
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
-    logout(request) # Terminate user session
-    data = {"userName":""} # Return empty username
-    return JsonResponse(data)
+    logout(request)
+    return JsonResponse({"userName": ""})
 # ...
 
 # Create a `registration` view to handle sign up request
@@ -72,7 +64,13 @@ def registration(request):
     # If it is a new user
     if not username_exist:
         # Create user in auth_user table
-        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,password=password, email=email)
+        user = User.objects.create_user(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+            email=email,
+        )
         # Login the user and redirect to list page
         login(request, user)
         data = {"userName":username,"status":"Authenticated"}
@@ -147,12 +145,11 @@ def get_dealer_details(request, dealer_id):
 # def add_review(request):
 # ...
 def add_review(request):
-    if(request.user.is_anonymous == False):
+    if not request.user.is_anonymous:
         data = json.loads(request.body)
         try:
-            response = post_review(data)
-            return JsonResponse({"status":200})
+            post_review(data)
+            return JsonResponse({"status": 200})
         except Exception:
-            return JsonResponse({"status":401,"message":"Error in posting review"})
-    else:
-        return JsonResponse({"status":403,"message":"Unauthorized"})
+            return JsonResponse({"status": 401, "message": "Error in posting review"})
+    return JsonResponse({"status": 403, "message": "Unauthorized"})
