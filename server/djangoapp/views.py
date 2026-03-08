@@ -128,13 +128,19 @@ def get_dealer_reviews(request, dealer_id):
 # def get_dealer_details(request, dealer_id):
 # ...
 def get_dealer_details(request, dealer_id):
-    if(dealer_id):
-        endpoint = "/fetchDealer/"+str(dealer_id)
+    if dealer_id:
+        endpoint = "/fetchDealer/" + str(dealer_id)
         dealership = get_request(endpoint)
-        return JsonResponse({"status":200,"dealer":dealership})
-    else:
-        return JsonResponse({"status":400,"message":"Bad Request"})
 
+        # normalize to list to match React Dealer component expectation
+        if isinstance(dealership, dict):
+            dealership = [dealership]
+        elif dealership is None:
+            dealership = []
+
+        return JsonResponse({"status": 200, "dealer": dealership})
+    else:
+        return JsonResponse({"status": 400, "message": "Bad Request"})
 
 
 # Create a `add_review` view to submit a review
